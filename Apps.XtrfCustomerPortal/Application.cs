@@ -1,6 +1,6 @@
 ﻿using Blackbird.Applications.Sdk.Common;
 
-namespace Apps.App;
+namespace Apps.XtrfCustomerPortal;
 
 public class Application : IApplication
 {
