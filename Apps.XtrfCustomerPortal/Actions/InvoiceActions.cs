@@ -48,16 +48,17 @@ public class InvoiceActions(InvocationContext invocationContext, IFileManagement
     }
     
     [Action("Get invoice", Description = "Get a specific invoice")]
-    public async Task<InvoiceDto> GetInvoice([ActionParameter] InvoiceIdentifier invoiceIdentifier)
+    public async Task<InvoiceResponse> GetInvoice([ActionParameter] InvoiceIdentifier invoiceIdentifier)
     {
-        var invoice = await Client.ExecuteRequestAsync<InvoiceDto>($"/invoices/{invoiceIdentifier.InvoiceId}", Method.Get, null);
-        return invoice;
+        var invoices = await SearchInvoices(new SearchInvoicesRequest());
+        return invoices.Invoices.FirstOrDefault(i => i.InvoiceId == invoiceIdentifier.InvoiceId) 
+            ?? throw new Exception($"Invoice with ID {invoiceIdentifier.InvoiceId} not found");
     }
     
     [Action("Download invoice", Description = "Download a specific invoice as a PDF")]
     public async Task<DownloadInvoiceResponse> DownloadInvoiceAsPdf([ActionParameter] InvoiceIdentifier invoiceIdentifier)
     {
-        var invoicePdf = await Client.ExecuteRequestAsync($"/invoices/{invoiceIdentifier.InvoiceId}/document", Method.Get, null);
+        var invoicePdf = await Client.ExecuteRequestAsync($"/invoices/{invoiceIdentifier.InvoiceId}/document", Method.Get, null, false);
         var rawBytes = invoicePdf.RawBytes!;
         var fileName = $"{invoiceIdentifier.InvoiceId}.pdf";
         

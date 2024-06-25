@@ -62,10 +62,10 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
     }
     
     [Action("Get quote", Description = "Get a specific quote")]
-    public async Task<QuoteDto> GetQuote([ActionParameter] QuoteIdentifier quoteIdentifier)
+    public async Task<QuoteResponse> GetQuote([ActionParameter] QuoteIdentifier quoteIdentifier)
     {
-        var quote = await Client.ExecuteRequestAsync<QuoteDto>($"/quotes/{quoteIdentifier.QuoteId}", Method.Get, null);
-        return quote;
+        var quoteDto = await Client.ExecuteRequestAsync<QuoteDto>($"/quotes/{quoteIdentifier.QuoteId}", Method.Get, null);
+        return new(quoteDto);
     }
     
     private async Task<GetQuotesResponse> FetchQuotesWithPagination(string endpoint)

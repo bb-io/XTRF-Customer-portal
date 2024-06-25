@@ -33,13 +33,17 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
         return response;
     }
     
-    public async Task<RestResponse> ExecuteRequestAsync(string endpoint, Method method, object? bodyObj)
+    public async Task<RestResponse> ExecuteRequestAsync(string endpoint, Method method, object? bodyObj, bool addTokenToUrl = true)
     {
         _lastLoginDto ??= await GetTokenAsync();
         var request = new RestRequest(endpoint, method)
             .AddHeader(TokenKey, _lastLoginDto.JSessionId);
+
+        if (addTokenToUrl)
+        {
+            request.Resource = UrlHelper.BuildRequestUrl(Options.BaseUrl!.ToString(), endpoint, _lastLoginDto.JsessionCookie);
+        }
         
-        request.Resource = UrlHelper.BuildRequestUrl(Options.BaseUrl!.ToString(), endpoint, _lastLoginDto.JsessionCookie);
         if (bodyObj is not null)
         {
             request.WithJsonBody(bodyObj);
