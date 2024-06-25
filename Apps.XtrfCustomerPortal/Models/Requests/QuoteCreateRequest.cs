@@ -1,6 +1,8 @@
+using Apps.XtrfCustomerPortal.DataSources;
 using Apps.XtrfCustomerPortal.DataSources.Static;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Dictionaries;
+using Blackbird.Applications.Sdk.Common.Dynamic;
 using Blackbird.Applications.Sdk.Common.Files;
 
 namespace Apps.XtrfCustomerPortal.Models.Requests;
@@ -15,16 +17,16 @@ public class QuoteCreateRequest
     
     public IEnumerable<FileReference> Files { get; set; }
 
-    [Display("Service ID")]
+    [Display("Service ID"), DataSource(typeof(ServiceDataSource))]
     public string ServiceId { get; set; }
     
-    [Display("Source language ID")]
+    [Display("Source language ID"), DataSource(typeof(LanguageDataSource))]
     public string SourceLanguageId { get; set; }
     
-    [Display("Target language IDs")]
+    [Display("Target language IDs"), DataSource(typeof(LanguageDataSource))]
     public IEnumerable<string> TargetLanguageIds { get; set; }
     
-    [Display("Specialization ID")]
+    [Display("Specialization ID"), DataSource(typeof(SpecializationDataSource))]
     public string SpecializationId { get; set; }
 
     [Display("Delivery date", Description = "By default, the delivery date is set to the current date + 7 days.")]
@@ -33,23 +35,23 @@ public class QuoteCreateRequest
     [Display("Note")]
     public string? Note { get; set; }
 
-    [Display("Price profile ID")]
+    [Display("Price profile ID"), DataSource(typeof(PriceProfileDataSource))]
     public string PriceProfileId { get; set; }
 
-    [Display("Person ID")]
+    [Display("Person ID"), DataSource(typeof(PersonDataSource))]
     public string PersonId { get; set; }
 
-    [Display("Send back to ID")]
+    [Display("Send back to ID"), DataSource(typeof(PersonDataSource))]
     public string? SendBackToId { get; set; }
 
-    [Display("Additional person IDs")]
+    [Display("Additional person IDs"), DataSource(typeof(PersonDataSource))]
     public IEnumerable<string>? AdditionalPersonIds { get; set; }
     
     [Display("Additional email addresses")]
     public IEnumerable<FileReference>? ReferenceFiles { get; set; }
 
-    [Display("Office ID")]
-    public string OfficeId { get; set; }
+    [Display("Office ID"), DataSource(typeof(OfficeDataSource))]
+    public string? OfficeId { get; set; }
     
     [Display("Budget code")]
     public string? BudgetCode { get; set; }

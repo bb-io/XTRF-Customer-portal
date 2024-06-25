@@ -139,12 +139,26 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
                 ? new List<FileUploadDto>() 
                 : await UploadFilesAsync(request.ReferenceFiles),
             customFields = new List<string>(),
-            officeId = int.Parse(request.OfficeId),
+            officeId = request.OfficeId != null 
+                ? int.Parse(request.OfficeId) 
+                : (await GetDefaultOffice()).Id,
             budgetCode = request.BudgetCode ?? string.Empty,
-            catToolType = request.CatToolType ?? "TRADOS",
+            catToolType = request.CatToolType ?? "TRADOS"
         };
         
         var quoteDto = await Client.ExecuteRequestAsync<QuoteDto>("/v2/quotes", Method.Post, obj);
         return new(quoteDto);
+    }
+    
+    public async Task<FullOfficeDto> GetDefaultOffice()
+    {
+        var officeDto = await Client.ExecuteRequestAsync<FullOfficeDto>($"/offices/default", Method.Get, null);
+        return officeDto;
+    }
+    
+    public async Task<FullOfficeDto> GetOfficeById(string officeId)
+    {
+        var officeDto = await Client.ExecuteRequestAsync<FullOfficeDto>($"/offices/{officeId}", Method.Get, null);
+        return officeDto;
     }
 }
