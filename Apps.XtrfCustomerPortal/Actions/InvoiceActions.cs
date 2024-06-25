@@ -4,6 +4,7 @@ using Apps.XtrfCustomerPortal.Models.Identifiers;
 using Apps.XtrfCustomerPortal.Models.Requests;
 using Apps.XtrfCustomerPortal.Models.Responses.Invoices;
 using Apps.XtrfCustomerPortal.Utilities.Extensions;
+using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
@@ -16,7 +17,7 @@ public class InvoiceActions(InvocationContext invocationContext, IFileManagement
     : AppInvocable(invocationContext)
 {
     [Action("Search invoices", Description = "Search invoices")]
-    public async Task<GetInvoicesResponse> SearchInvoices(SearchInvoicesRequest request)
+    public async Task<GetInvoicesResponse> SearchInvoices([ActionParameter] SearchInvoicesRequest request)
     {
         var endpoint = "/invoices?limit=50";
     
@@ -47,14 +48,14 @@ public class InvoiceActions(InvocationContext invocationContext, IFileManagement
     }
     
     [Action("Get invoice", Description = "Get a specific invoice")]
-    public async Task<InvoiceDto> GetInvoice(InvoiceIdentifier invoiceIdentifier)
+    public async Task<InvoiceDto> GetInvoice([ActionParameter] InvoiceIdentifier invoiceIdentifier)
     {
         var invoice = await Client.ExecuteRequestAsync<InvoiceDto>($"/invoices/{invoiceIdentifier.InvoiceId}", Method.Get, null);
         return invoice;
     }
     
     [Action("Download invoice", Description = "Download a specific invoice as a PDF")]
-    public async Task<DownloadInvoiceResponse> DownloadInvoiceAsPdf(InvoiceIdentifier invoiceIdentifier)
+    public async Task<DownloadInvoiceResponse> DownloadInvoiceAsPdf([ActionParameter] InvoiceIdentifier invoiceIdentifier)
     {
         var invoicePdf = await Client.ExecuteRequestAsync($"/invoices/{invoiceIdentifier.InvoiceId}/document", Method.Get, null);
         var rawBytes = invoicePdf.RawBytes!;

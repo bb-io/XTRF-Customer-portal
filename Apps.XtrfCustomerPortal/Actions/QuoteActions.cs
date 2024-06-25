@@ -4,6 +4,7 @@ using Apps.XtrfCustomerPortal.Models.Identifiers;
 using Apps.XtrfCustomerPortal.Models.Requests;
 using Apps.XtrfCustomerPortal.Models.Responses.Quotes;
 using Apps.XtrfCustomerPortal.Utilities.Extensions;
+using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Files;
 using Blackbird.Applications.Sdk.Common.Invocation;
@@ -19,7 +20,7 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
     : AppInvocable(invocationContext)
 {
     [Action("Search quotes", Description = "Search quotes")]
-    public async Task<GetQuotesResponse> SearchQuotes(SearchQuotesRequest searchQuotesRequest)
+    public async Task<GetQuotesResponse> SearchQuotes([ActionParameter] SearchQuotesRequest searchQuotesRequest)
     {
         var endpoint = "/quotes?limit=50";
         if (!string.IsNullOrEmpty(searchQuotesRequest.Status))
@@ -61,7 +62,7 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
     }
     
     [Action("Get quote", Description = "Get a specific quote")]
-    public async Task<QuoteDto> GetQuote(QuoteIdentifier quoteIdentifier)
+    public async Task<QuoteDto> GetQuote([ActionParameter] QuoteIdentifier quoteIdentifier)
     {
         var quote = await Client.ExecuteRequestAsync<QuoteDto>($"/quotes/{quoteIdentifier.QuoteId}", Method.Get, null);
         return quote;
