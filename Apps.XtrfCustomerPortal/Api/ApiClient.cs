@@ -15,19 +15,34 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
 {
     private const string TokenKey = "XTRF-CP-Auth-Token";
     private const string JsessionCookie = "JSESSIONID";
+    private LoginDto? _lastLoginDto;
     
     public async Task<T> ExecuteRequestAsync<T>(string endpoint, Method method, object? bodyObj)
     {
-        var loginDto = await GetTokenAsync();
+        _lastLoginDto ??= await GetTokenAsync();
         var request = new RestRequest(endpoint, method)
-            .AddHeader(TokenKey, loginDto.JSessionId);
+            .AddHeader(TokenKey, _lastLoginDto.JSessionId);
         
-        request.Resource = UrlHelper.BuildRequestUrl(Options.BaseUrl!.ToString(), endpoint, loginDto.JsessionCookie);
+        request.Resource = UrlHelper.BuildRequestUrl(Options.BaseUrl!.ToString(), endpoint, _lastLoginDto.JsessionCookie);
         if (bodyObj is not null)
         {
             request.WithJsonBody(bodyObj);
         }
         
+        var response = await ExecuteWithErrorHandling<T>(request);
+        return response;
+    }
+    
+    public async Task<T> UploadFileAsync<T>(string endpoint, byte[] fileBytes, string fileName)
+    {
+        _lastLoginDto ??= await GetTokenAsync();
+        
+        var request = new RestRequest(endpoint, Method.Post)
+            .AddHeader(TokenKey, _lastLoginDto.JSessionId)
+            .AddFile("file", fileBytes, fileName, "multipart/form-data");
+        
+        request.Resource = UrlHelper.BuildRequestUrl(Options.BaseUrl!.ToString(), endpoint, _lastLoginDto.JsessionCookie);
+
         var response = await ExecuteWithErrorHandling<T>(request);
         return response;
     }
