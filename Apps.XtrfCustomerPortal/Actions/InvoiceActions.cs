@@ -65,7 +65,7 @@ public class InvoiceActions(InvocationContext invocationContext, IFileManagement
         var stream = new MemoryStream(rawBytes);
         stream.Position = 0;
         
-        var fileReference = await fileManagementClient.UploadAsync(stream, fileName, "application/pdf");
+        var fileReference = await fileManagementClient.UploadAsync(stream, "application/pdf", fileName);
         return new DownloadInvoiceResponse
         {
             File = fileReference

@@ -95,58 +95,56 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
         return new GetQuotesResponse(allQuotes);
     }
     
-    public async Task<List<FileUploadDto>> UploadFileAsync(FileReference file)
+    private async Task<List<FileUploadDto>> UploadFilesAsync(IEnumerable<FileReference> files)
     {
-        var stream = await fileManagementClient.DownloadAsync(file);
-        var bytes = await stream.GetByteData();
+        var fileUploadDtos = new List<FileUploadDto>();
+        foreach (var file in files)
+        {
+            var stream = await fileManagementClient.DownloadAsync(file);
+            var bytes = await stream.GetByteData();
 
-        var response = await Client.UploadFileAsync<List<FileUploadDto>>("/system/session/files", bytes, file.Name);
-        return response;
+            var response = await Client.UploadFileAsync<List<FileUploadDto>>("/system/session/files", bytes, file.Name);
+            fileUploadDtos.AddRange(response);
+        }
+        
+        return fileUploadDtos;
     }
 
-    public async Task CreateQuote()
+    [Action("Create quote", Description = "Create a new quote based on the provided data")]
+    public async Task<QuoteResponse> CreateQuote([ActionParameter] QuoteCreateRequest request)
     {
-        var files = await UploadFileAsync(new FileReference()
-        {
-            Name = "test.txt",
-            ContentType = "text/plain",
-        });
-
         var obj = new
         {
-            name = "Test project #1",
-            customerProjectNumber = "1207",
-            serviceId = 5,
-            sourceLanguageId = 74,
-            targetLanguageIds = new[] { 240 },
-            specializationId = 1,
+            name = request.QuoteName,
+            customerProjectNumber = request.CustomerProjectNumber,
+            serviceId = int.Parse(request.ServiceId),
+            sourceLanguageId = int.Parse(request.SourceLanguageId),
+            targetLanguageIds = request.TargetLanguageIds.Select(int.Parse).ToList(),
+            specializationId = int.Parse(request.SpecializationId),
             deliveryDate = new
             {
-                time = DateTimeOffset.UtcNow.AddHours(24).ToUnixTimeMilliseconds(),
+                time = request.DeliveryDate.HasValue 
+                    ? new DateTimeOffset(request.DeliveryDate.Value).ToUnixTimeMilliseconds() 
+                    : DateTime.Now.AddDays(7).ToUnixTimeMilliseconds()
             },
-            notes = "test-note",
-            priceProfileId = 47,
-            personId = 18,
-            sendBackToId = 18,
-            additionalPersonIds = new List<int>(),
-            files = files,
-            referenceFiles = new List<FileUploadDto>(),
-            customFields = new[]
-            {
-                new
-                {
-                    key = "custom_field_1",
-                    value = "custom_value_1"
-                }
-            },
-            officeId = 47,
-            budgetCode = "BUDGET2024",
-            catToolType = "TRADOS"
+            notes = request.Note ?? string.Empty,
+            priceProfileId = int.Parse(request.PriceProfileId),
+            personId = int.Parse(request.PersonId),
+            sendBackToId = request.SendBackToId == null ? int.Parse(request.PersonId) : int.Parse(request.SendBackToId),
+            additionalPersonIds = request.AdditionalPersonIds == null 
+                ? new List<int>() 
+                : request.AdditionalPersonIds.Select(int.Parse).ToList(),
+            files = await UploadFilesAsync(request.Files),
+            referenceFiles = request.ReferenceFiles == null 
+                ? new List<FileUploadDto>() 
+                : await UploadFilesAsync(request.ReferenceFiles),
+            customFields = new List<string>(),
+            officeId = int.Parse(request.OfficeId),
+            budgetCode = request.BudgetCode ?? string.Empty,
+            catToolType = request.CatToolType ?? "TRADOS",
         };
         
-        var json = JsonConvert.SerializeObject(obj, Formatting.Indented);
-        var response = await Client.ExecuteRequestAsync<object>("/v2/quotes", Method.Post, obj);
-
-        await Task.Delay(1000);
+        var quoteDto = await Client.ExecuteRequestAsync<QuoteDto>("/v2/quotes", Method.Post, obj);
+        return new(quoteDto);
     }
 }
