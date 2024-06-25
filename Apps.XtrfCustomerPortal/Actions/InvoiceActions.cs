@@ -58,7 +58,7 @@ public class InvoiceActions(InvocationContext invocationContext, IFileManagement
     [Action("Download invoice", Description = "Download a specific invoice as a PDF")]
     public async Task<DownloadInvoiceResponse> DownloadInvoiceAsPdf([ActionParameter] InvoiceIdentifier invoiceIdentifier)
     {
-        var invoicePdf = await Client.ExecuteRequestAsync($"/invoices/{invoiceIdentifier.InvoiceId}/document", Method.Get, null, false);
+        var invoicePdf = await Client.ExecuteRequestAsync($"/invoices/{invoiceIdentifier.InvoiceId}/document", Method.Get, null, "application/pdf");
         var rawBytes = invoicePdf.RawBytes!;
         var fileName = $"{invoiceIdentifier.InvoiceId}.pdf";
         
