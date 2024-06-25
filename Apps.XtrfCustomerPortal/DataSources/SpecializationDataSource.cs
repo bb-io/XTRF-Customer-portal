@@ -10,7 +10,7 @@ public class SpecializationDataSource(InvocationContext invocationContext)
 {
     public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context, CancellationToken cancellationToken)
     {
-        var specializationDtos = await Client.ExecuteRequestAsync<List<SpecializationDto>>("/system/values/services", Method.Get, null);
+        var specializationDtos = await Client.ExecuteRequestAsync<List<SpecializationDto>>("/system/values/specializations", Method.Get, null);
         return specializationDtos
             .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
             .ToDictionary(x => x.Id, x => x.Name);
