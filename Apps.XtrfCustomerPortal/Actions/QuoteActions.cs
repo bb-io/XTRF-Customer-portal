@@ -27,30 +27,9 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
             endpoint = endpoint.AddQueryParameter("status", searchQuotesRequest.Status);
         }
         
-        var searchParameters = new List<string>();
-        if (!string.IsNullOrEmpty(searchQuotesRequest.RefNumber))
+        if (!string.IsNullOrEmpty(searchQuotesRequest.Search))
         {
-            searchParameters.Add(searchQuotesRequest.RefNumber);
-        }
-
-        if (!string.IsNullOrEmpty(searchQuotesRequest.IdNumber))
-        {
-            searchParameters.Add(searchQuotesRequest.IdNumber);
-        }
-
-        if (!string.IsNullOrEmpty(searchQuotesRequest.Name))
-        {
-            searchParameters.Add(searchQuotesRequest.Name);
-        }
-
-        if (searchParameters.Count > 1)
-        {
-            throw new ArgumentException("Please provide only one search parameter (RefNumber, IdNumber, or Name).");
-        }
-        
-        if (searchParameters.Count == 1)
-        {
-            endpoint = endpoint.AddQueryParameter("search", searchParameters[0]);
+            endpoint = endpoint.AddQueryParameter("search", searchQuotesRequest.Search);
         }
         
         if (searchQuotesRequest.CreatedOnFrom.HasValue)

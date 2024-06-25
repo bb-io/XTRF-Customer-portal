@@ -33,6 +33,22 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
         return response;
     }
     
+    public async Task<RestResponse> ExecuteRequestAsync(string endpoint, Method method, object? bodyObj)
+    {
+        _lastLoginDto ??= await GetTokenAsync();
+        var request = new RestRequest(endpoint, method)
+            .AddHeader(TokenKey, _lastLoginDto.JSessionId);
+        
+        request.Resource = UrlHelper.BuildRequestUrl(Options.BaseUrl!.ToString(), endpoint, _lastLoginDto.JsessionCookie);
+        if (bodyObj is not null)
+        {
+            request.WithJsonBody(bodyObj);
+        }
+        
+        var response = await ExecuteWithErrorHandling(request);
+        return response;
+    }
+    
     public async Task<T> UploadFileAsync<T>(string endpoint, byte[] fileBytes, string fileName)
     {
         _lastLoginDto ??= await GetTokenAsync();

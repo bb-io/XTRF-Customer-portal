@@ -6,19 +6,19 @@ using Blackbird.Applications.Sdk.Common.Invocation;
 
 namespace Apps.XtrfCustomerPortal.DataSources;
 
-public class QuoteDataSource(InvocationContext invocationContext)
+public class InvoiceDataSource(InvocationContext invocationContext)
     : AppInvocable(invocationContext), IAsyncDataSourceHandler
 {
     public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context, CancellationToken cancellationToken)
     {
-        var quoteActions = new QuoteActions(invocationContext, null!);
+        var quoteActions = new InvoiceActions(invocationContext, null!);
 
-        var quotes = await quoteActions.SearchQuotes(new SearchQuotesRequest()
+        var quotes = await quoteActions.SearchInvoices(new SearchInvoicesRequest
         {
             Search = context.SearchString ?? string.Empty
         });
         
-        return quotes.Quotes
-            .ToDictionary(x => x.QuoteId, x => x.QuoteName);
+        return quotes.Invoices
+            .ToDictionary(x => x.InvoiceId, x => x.FinalNumber);
     }
 }
