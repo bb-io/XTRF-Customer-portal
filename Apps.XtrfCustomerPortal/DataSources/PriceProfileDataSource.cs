@@ -25,7 +25,7 @@ public class PriceProfileDataSource(InvocationContext invocationContext, [Action
         }
 
         return officeDto.PriceProfiles
-            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString))
+            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
             .ToDictionary(x => x.Id.ToString(), x => x.Name);
     }
 }

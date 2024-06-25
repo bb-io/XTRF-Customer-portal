@@ -12,7 +12,7 @@ public class ServiceDataSource(InvocationContext invocationContext)
     {
         var services = await Client.ExecuteRequestAsync<List<ServiceDto>>("/system/values/services", Method.Get, null);
         return services
-            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString))
+            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
             .ToDictionary(x => x.Id, x => x.Name);
     }
 }

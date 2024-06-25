@@ -25,7 +25,7 @@ public class PersonDataSource(InvocationContext invocationContext, [ActionParame
         }
 
         return officeDto.Persons
-            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString))
+            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
             .ToDictionary(x => x.Id.ToString(), x => x.Name);
     }
 }

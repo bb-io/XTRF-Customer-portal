@@ -13,7 +13,7 @@ public class OfficeDataSource(InvocationContext invocationContext)
     {
         var offices = await Client.ExecuteRequestAsync<List<FullOfficeDto>>("/offices", Method.Get, null);
         return offices
-            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString))
+            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
             .ToDictionary(x => x.Id.ToString(), x => x.Name);
     }
 }

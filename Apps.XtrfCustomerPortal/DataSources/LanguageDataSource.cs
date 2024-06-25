@@ -10,9 +10,9 @@ public class LanguageDataSource(InvocationContext invocationContext)
 {
     public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context, CancellationToken cancellationToken)
     {
-        var languages = await Client.ExecuteRequestAsync<List<LanguageDto>>("/system/values/services", Method.Get, null);
+        var languages = await Client.ExecuteRequestAsync<List<LanguageDto>>("/system/values/languages", Method.Get, null);
         return languages
-            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString))
+            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
             .ToDictionary(x => x.Id, x => x.Name);
     }
 }

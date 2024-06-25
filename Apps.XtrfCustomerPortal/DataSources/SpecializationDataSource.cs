@@ -12,7 +12,7 @@ public class SpecializationDataSource(InvocationContext invocationContext)
     {
         var specializationDtos = await Client.ExecuteRequestAsync<List<SpecializationDto>>("/system/values/services", Method.Get, null);
         return specializationDtos
-            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString))
+            .Where(x => string.IsNullOrEmpty(context.SearchString) || x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
             .ToDictionary(x => x.Id, x => x.Name);
     }
 }
