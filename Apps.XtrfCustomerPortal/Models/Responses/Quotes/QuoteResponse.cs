@@ -26,7 +26,7 @@ public class QuoteResponse
     
     [Display("Specialization")] public string Specialization { get; set; }
     
-    [Display("Language combinations")] public List<LanguageCombinationQuoteResponse> LanguageCombinations { get; set; }
+    [Display("Language combinations")] public List<LanguageCombinationResponse> LanguageCombinations { get; set; }
     
     [Display("Start date")] public DateTime StartDate { get; set; } = new();
     
@@ -54,7 +54,7 @@ public class QuoteResponse
         Service = quoteDtoDto.Service;
         Workflow = quoteDtoDto.Workflow;
         Specialization = quoteDtoDto.Specialization;
-        LanguageCombinations = quoteDtoDto.LanguageCombinations.Select(lc => new LanguageCombinationQuoteResponse
+        LanguageCombinations = quoteDtoDto.LanguageCombinations.Select(lc => new LanguageCombinationResponse
         {
             SourceLanguage = lc.SourceLanguage.Symbol,
             TargetLanguage = lc.TargetLanguage.Symbol
@@ -86,7 +86,7 @@ public class QuoteResponse
     }
 }
 
-public class LanguageCombinationQuoteResponse
+public class LanguageCombinationResponse
 {
     [Display("Source language")] public string SourceLanguage { get; set; } = string.Empty;
     

@@ -11,7 +11,7 @@ public class QuoteDto
     public string Service { get; set; } = string.Empty;
     public string Workflow { get; set; } = string.Empty;
     public string Specialization { get; set; } = string.Empty;
-    public List<LanguageCombinationQuote> LanguageCombinations { get; set; } = new();
+    public List<LanguageCombinationDto> LanguageCombinations { get; set; } = new();
     public Date StartDate { get; set; } = new();
     public Date Deadline { get; set; } = new();
     public Office Office { get; set; } = new();
@@ -27,7 +27,7 @@ public class AmountDetail
     public string FormattedAmount { get; set; } = string.Empty;
 }
 
-public class LanguageCombinationQuote
+public class LanguageCombinationDto
 {
     public Language SourceLanguage { get; set; } = new();
     public Language TargetLanguage { get; set; } = new();

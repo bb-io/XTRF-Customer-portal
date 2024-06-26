@@ -2,7 +2,7 @@ using Blackbird.Applications.Sdk.Common.Dictionaries;
 
 namespace Apps.XtrfCustomerPortal.DataSources.Static;
 
-public class StatusDataSource : IStaticDataSourceHandler
+public class QuoteStatusDataSource : IStaticDataSourceHandler
 {
     public Dictionary<string, string> GetData()
     {

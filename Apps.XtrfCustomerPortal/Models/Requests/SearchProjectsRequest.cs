@@ -4,13 +4,19 @@ using Blackbird.Applications.Sdk.Common.Dictionaries;
 
 namespace Apps.XtrfCustomerPortal.Models.Requests;
 
-public class SearchQuotesRequest
+public class SearchProjectsRequest
 {
-    [StaticDataSource(typeof(QuoteStatusDataSource))]
-    public string? Status { get; set; }
+    [StaticDataSource(typeof(ProjectStatusDataSource))]
+    public IEnumerable<string>? Statuses { get; set; }
+    
+    [StaticDataSource(typeof(SurveyStatusDataSource))]
+    public string? SurveyStatus { get; set; }
 
-    [Display("Search (Reference number, ID number, or quote name)")]
+    [Display("Search (Project ID, ID number, reference number, or project name)")]
     public string? Search { get; set; }
+    
+    [Display("Customer's project number")]
+    public string? CustomerProjectNumber { get; set; }
     
     [Display("Created on from")]
     public DateTime? CreatedOnFrom { get; set; }
