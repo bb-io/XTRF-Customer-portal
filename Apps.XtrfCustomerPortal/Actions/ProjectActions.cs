@@ -6,6 +6,7 @@ using Apps.XtrfCustomerPortal.Models.Responses.Projects;
 using Apps.XtrfCustomerPortal.Utilities.Extensions;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
+using Blackbird.Applications.Sdk.Common.Files;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 using RestSharp;
@@ -122,6 +123,31 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
 
         var projectDto = await Client.ExecuteRequestAsync<ProjectDto>("/v2/projects", Method.Post, obj);
         return new ProjectResponse(projectDto);
+    }
+    
+    [Action("Download project files", Description = "Download project translation files")]
+    public async Task<DownloadProjectFilesResponse> DownloadProjectFiles([ActionParameter] ProjectIdentifier projectIdentifier)
+    {
+        var taskFilesDto = await Client.ExecuteRequestAsync<TaskFilesDto>($"/projects/{projectIdentifier.ProjectId}/files", Method.Get, null);
+        var files = taskFilesDto.TasksFiles.SelectMany(x => x.Output?.Files ?? new List<TaskFilesDto.File>()).ToList();
+
+        var fileReferences = new List<FileReference>();
+        foreach (var file in files)
+        {
+            var invoicePdf = await Client.ExecuteRequestAsync($"/projects/files/{file.Id}", Method.Get, null, "application/octet-stream");
+            var rawBytes = invoicePdf.RawBytes!;
+            
+            var stream = new MemoryStream(rawBytes);
+            stream.Position = 0;
+            
+            var fileReference = await fileManagementClient.UploadAsync(stream, "application/octet-stream", file.Name);
+            fileReferences.Add(fileReference);
+        }
+        
+        return new DownloadProjectFilesResponse
+        {
+            Files = fileReferences
+        };
     }
     
     private async Task<List<ProjectDto>> FetchProjectsWithPagination(string endpoint)

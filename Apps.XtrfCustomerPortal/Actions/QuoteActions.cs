@@ -6,10 +6,8 @@ using Apps.XtrfCustomerPortal.Models.Responses.Quotes;
 using Apps.XtrfCustomerPortal.Utilities.Extensions;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
-using Blackbird.Applications.Sdk.Common.Files;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
-using Blackbird.Applications.Sdk.Utils.Extensions.Files;
 using RestSharp;
 
 namespace Apps.XtrfCustomerPortal.Actions;
