@@ -17,7 +17,7 @@ namespace Apps.XtrfCustomerPortal.Actions;
 public class ProjectActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : AppInvocable(invocationContext)
 {
-    [Action("Search projects", Description = "Search projects")]
+    [Action("Search projects", Description = "Search projects based on search criteria")]
     public async Task<GetProjectsResponse> SearchProjects([ActionParameter] SearchProjectsRequest searchProjectsRequest)
     {
         var endpoint = "/projects?limit=50";
@@ -77,7 +77,7 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
         return new GetProjectsResponse(projects);
     }
 
-    [Action("Get project", Description = "Get project based on project identifier")]
+    [Action("Get project", Description = "Get project based on project ID")]
     public async Task<ProjectResponse> GetProject([ActionParameter] ProjectIdentifier projectIdentifier)
     {
         var projectDto =

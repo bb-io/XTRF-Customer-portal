@@ -16,7 +16,7 @@ namespace Apps.XtrfCustomerPortal.Actions;
 public class InvoiceActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : AppInvocable(invocationContext)
 {
-    [Action("Search invoices", Description = "Search invoices")]
+    [Action("Search invoices", Description = "Search invoices based on the provided criteria")]
     public async Task<GetInvoicesResponse> SearchInvoices([ActionParameter] SearchInvoicesRequest request)
     {
         var endpoint = "/invoices?limit=50";
@@ -47,7 +47,7 @@ public class InvoiceActions(InvocationContext invocationContext, IFileManagement
         return invoices;
     }
     
-    [Action("Get invoice", Description = "Get a specific invoice")]
+    [Action("Get invoice", Description = "Get a specific invoice by ID")]
     public async Task<InvoiceResponse> GetInvoice([ActionParameter] InvoiceIdentifier invoiceIdentifier)
     {
         var invoices = await SearchInvoices(new SearchInvoicesRequest());

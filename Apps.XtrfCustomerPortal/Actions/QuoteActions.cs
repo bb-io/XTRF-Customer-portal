@@ -16,7 +16,7 @@ namespace Apps.XtrfCustomerPortal.Actions;
 public class QuoteActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : AppInvocable(invocationContext)
 {
-    [Action("Search quotes", Description = "Search quotes")]
+    [Action("Search quotes", Description = "Search quotes based on the provided criteria")]
     public async Task<GetQuotesResponse> SearchQuotes([ActionParameter] SearchQuotesRequest searchQuotesRequest)
     {
         var endpoint = "/quotes?limit=50";
@@ -58,7 +58,7 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
         return quotes;
     }
     
-    [Action("Get quote", Description = "Get a specific quote")]
+    [Action("Get quote", Description = "Get a specific quote by Quote ID")]
     public async Task<QuoteResponse> GetQuote([ActionParameter] QuoteIdentifier quoteIdentifier)
     {
         var quoteDto = await Client.ExecuteRequestAsync<QuoteDto>($"/quotes/{quoteIdentifier.QuoteId}", Method.Get, null);
