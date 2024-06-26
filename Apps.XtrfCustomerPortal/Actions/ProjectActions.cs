@@ -84,6 +84,46 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
         return new ProjectResponse(projectDto);
     }
     
+    [Action("Create project", Description = "Create a new project")]
+    public async Task<ProjectResponse> CreateProject([ActionParameter] CreateProjectRequest request)
+    {
+        var obj = new
+        {
+            name = request.ProjectName,
+            customerProjectNumber = request.CustomerProjectNumber,
+            serviceId = int.Parse(request.ServiceId),
+            sourceLanguageId = int.Parse(request.SourceLanguageId),
+            targetLanguageIds = request.TargetLanguageIds.Select(int.Parse).ToList(),
+            specializationId = int.Parse(request.SpecializationId),
+            deliveryDate = new
+            {
+                time = request.DeliveryDate.HasValue 
+                    ? new DateTimeOffset(request.DeliveryDate.Value).ToUnixTimeMilliseconds() 
+                    : DateTime.Now.AddDays(7).ToUnixTimeMilliseconds()
+            },
+            notes = request.Note ?? string.Empty,
+            priceProfileId = int.Parse(request.PriceProfileId),
+            personId = int.Parse(request.PersonId),
+            sendBackToId = request.SendBackToId == null ? int.Parse(request.PersonId) : int.Parse(request.SendBackToId),
+            additionalPersonIds = request.AdditionalPersonIds == null 
+                ? new List<int>() 
+                : request.AdditionalPersonIds.Select(int.Parse).ToList(),
+            files = await UploadFilesAsync(request.Files, fileManagementClient),
+            referenceFiles = request.ReferenceFiles == null 
+                ? new List<FileUploadDto>() 
+                : await UploadFilesAsync(request.ReferenceFiles, fileManagementClient),
+            customFields = new List<string>(),
+            officeId = request.OfficeId != null 
+                ? int.Parse(request.OfficeId) 
+                : (await GetDefaultOffice()).Id,
+            budgetCode = request.BudgetCode ?? string.Empty,
+            catToolType = request.CatToolType ?? "TRADOS"
+        };
+
+        var projectDto = await Client.ExecuteRequestAsync<ProjectDto>("/projects", Method.Post, obj);
+        return new ProjectResponse(projectDto);
+    }
+    
     private async Task<List<ProjectDto>> FetchProjectsWithPagination(string endpoint)
     {
         var allProjects = new List<ProjectDto>();
