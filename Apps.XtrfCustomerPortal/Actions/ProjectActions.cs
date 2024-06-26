@@ -120,7 +120,7 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
             catToolType = request.CatToolType ?? "TRADOS"
         };
 
-        var projectDto = await Client.ExecuteRequestAsync<ProjectDto>("/projects", Method.Post, obj);
+        var projectDto = await Client.ExecuteRequestAsync<ProjectDto>("/v2/projects", Method.Post, obj);
         return new ProjectResponse(projectDto);
     }
     
