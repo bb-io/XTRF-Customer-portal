@@ -40,7 +40,7 @@ public class ProjectDto
     
     public bool ProjectConfirmationAvailable { get; set; }
     
-    public DateTime? ActualDeliveryDate { get; set; }
+    public DateDto? ActualDeliveryDate { get; set; }
     
     public bool HasInputWorkfiles { get; set; }
     
