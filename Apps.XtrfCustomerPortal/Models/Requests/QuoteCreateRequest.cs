@@ -47,7 +47,7 @@ public class QuoteCreateRequest
     [Display("Additional person IDs"), DataSource(typeof(PersonDataSource))]
     public IEnumerable<string>? AdditionalPersonIds { get; set; }
     
-    [Display("Additional email addresses")]
+    [Display("Reference files")]
     public IEnumerable<FileReference>? ReferenceFiles { get; set; }
 
     [Display("Office ID"), DataSource(typeof(OfficeDataSource))]
