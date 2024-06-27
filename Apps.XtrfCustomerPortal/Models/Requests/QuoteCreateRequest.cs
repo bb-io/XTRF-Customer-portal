@@ -15,7 +15,7 @@ public class QuoteCreateRequest
     [Display("Customer project number")]
     public string? CustomerProjectNumber { get; set; }
     
-    public IEnumerable<FileReference> Files { get; set; }
+    public IEnumerable<FileReference>? Files { get; set; }
 
     [Display("Service ID"), DataSource(typeof(ServiceDataSource))]
     public string ServiceId { get; set; }
@@ -24,7 +24,7 @@ public class QuoteCreateRequest
     public string SourceLanguageId { get; set; }
     
     [Display("Target language IDs"), DataSource(typeof(LanguageDataSource))]
-    public IEnumerable<string> TargetLanguageIds { get; set; }
+    public IEnumerable<string>? TargetLanguageIds { get; set; }
     
     [Display("Specialization ID"), DataSource(typeof(SpecializationDataSource))]
     public string SpecializationId { get; set; }

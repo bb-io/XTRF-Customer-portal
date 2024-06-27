@@ -2,23 +2,6 @@ using Newtonsoft.Json;
 
 namespace Apps.XtrfCustomerPortal.Models.Dtos;
 
-/*
- * {
-    "id": 0,
-    "name": "string",
-    "size": 0,
-    "fileStats": {
-      "charactersWithSpaces": 0,
-      "charactersWithoutSpaces": 0,
-      "words": 0,
-      "lines": 0,
-      "pages": 0
-    },
-    "url": "string",
-    "delete_url": "string",
-    "delete_type": "string"
-  }
- */
 public class FileUploadDto
 {
     [JsonProperty("id")]

@@ -74,7 +74,9 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
             customerProjectNumber = request.CustomerProjectNumber,
             serviceId = int.Parse(request.ServiceId),
             sourceLanguageId = int.Parse(request.SourceLanguageId),
-            targetLanguageIds = request.TargetLanguageIds.Select(int.Parse).ToList(),
+            targetLanguageIds = request.TargetLanguageIds == null 
+                ? new List<int>() 
+                : request.TargetLanguageIds.Select(int.Parse).ToList(),
             specializationId = int.Parse(request.SpecializationId),
             deliveryDate = new
             {
@@ -89,7 +91,9 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
             additionalPersonIds = request.AdditionalPersonIds == null 
                 ? new List<int>() 
                 : request.AdditionalPersonIds.Select(int.Parse).ToList(),
-            files = await UploadFilesAsync(request.Files, fileManagementClient),
+            files = request.Files == null 
+                ? new List<FileUploadDto>() 
+                : await UploadFilesAsync(request.Files, fileManagementClient),
             referenceFiles = request.ReferenceFiles == null 
                 ? new List<FileUploadDto>() 
                 : await UploadFilesAsync(request.ReferenceFiles, fileManagementClient),
