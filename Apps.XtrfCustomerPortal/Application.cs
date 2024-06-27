@@ -22,7 +22,8 @@ public class Application : IApplication, ICategoryProvider
         {
             return new[]
             {
-                ApplicationCategory.TranslationBusinessManagement
+                ApplicationCategory.LspPortal,
+                ApplicationCategory.CatAndTms
             };
         }
         set { }
