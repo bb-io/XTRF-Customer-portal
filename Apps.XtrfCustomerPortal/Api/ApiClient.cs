@@ -100,23 +100,23 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
             using var xmlReader = new StringReader(response.Content!);
         
             var xmlErrorDto = (XmlErrorDto)xmlSerializer.Deserialize(xmlReader)!;
-            return new Exception($"Error message: {xmlErrorDto.Body}; StatusCode: {response.StatusCode}");
+            return new Exception($"Error message: {xmlErrorDto.Body}; Status code: {response.StatusCode}");
         }
         catch (InvalidOperationException)
         {
             try
             {
                 var jsonErrorDto = JsonConvert.DeserializeObject<JsonErrorDto>(response.Content!)!;
-                return new Exception($"Error message: {jsonErrorDto.ErrorMessage}; StatusCode: {response.StatusCode}");
+                return new Exception($"Error message: {jsonErrorDto.ErrorMessage}; Status code: {response.StatusCode}");
             }
             catch (JsonException)
             {
-                return new Exception($"Error message: {response.Content}; StatusCode: {response.StatusCode}");
+                return new Exception($"Error message: {response.Content}; Status code: {response.StatusCode}");
             }
         }
         catch (Exception ex)
         {
-            return new Exception($"Unexpected error during error deserialization: {ex.Message}; Error body: {response.Content!} ; StatusCode: {response.StatusCode}");
+            return new Exception($"Unexpected error during error deserialization: {ex.Message}; Error body: {response.Content!} ; Status code: {response.StatusCode}");
         }
     }
 }
