@@ -30,8 +30,7 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
             request.WithJsonBody(bodyObj);
         }
         
-        var response = await ExecuteWithErrorHandling<T>(request);
-        return response;
+        return await ExecuteWithErrorHandling<T>(request);
     }
     
     public async Task<RestResponse> ExecuteRequestAsync(string endpoint, Method method, object? bodyObj, string? acceptHeader = null)
@@ -95,6 +94,29 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
 
     protected override Exception ConfigureErrorException(RestResponse response)
     {
-        return new Exception($"Error message: {response.Content}; StatusCode: {response.StatusCode}");
+        try
+        {
+            var xmlSerializer = new XmlSerializer(typeof(XmlErrorDto));
+            using var xmlReader = new StringReader(response.Content!);
+        
+            var xmlErrorDto = (XmlErrorDto)xmlSerializer.Deserialize(xmlReader)!;
+            return new Exception($"Error message: {xmlErrorDto.Body}; Status code: {response.StatusCode}");
+        }
+        catch (InvalidOperationException)
+        {
+            try
+            {
+                var jsonErrorDto = JsonConvert.DeserializeObject<JsonErrorDto>(response.Content!)!;
+                return new Exception($"Error message: {jsonErrorDto.ErrorMessage}; Status code: {response.StatusCode}");
+            }
+            catch (JsonException)
+            {
+                return new Exception($"Error message: {response.Content}; Status code: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            return new Exception($"Unexpected error during error deserialization: {ex.Message}; Error body: {response.Content!} ; Status code: {response.StatusCode}");
+        }
     }
 }

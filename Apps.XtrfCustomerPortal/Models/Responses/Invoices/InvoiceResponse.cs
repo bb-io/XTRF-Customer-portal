@@ -3,48 +3,6 @@ using Blackbird.Applications.Sdk.Common;
 
 namespace Apps.XtrfCustomerPortal.Models.Responses.Invoices;
 
-/*
- * [
-  {
-    "id": 5,
-    "draftNumber": null,
-    "finalNumber": "2024/1",
-    "creditNoteNumber": null,
-    "currency": "€",
-    "totalBrutto": 0,
-    "totalNetto": 0,
-    "formattedTotalBrutto": "€0.00",
-    "formattedTotalNetto": "€0.00",
-    "charges": [
-      {
-        "value": 0,
-        "paidValue": 0,
-        "dueDate": {
-          "formatted": "2024-07-02",
-          "millisGMT": 1719914400000
-        }
-      }
-    ],
-    "expectedFullyPaidDate": {
-      "formatted": "2024-07-02",
-      "millisGMT": 1719914400000
-    },
-    "paymentState": "Fully Paid",
-    "overdue": false,
-    "notPaid": false,
-    "documents": [
-      {
-        "id": 820,
-        "name": "Built-in-Client Invoice (PDF) (en)",
-        "format": "pdf"
-      }
-    ],
-    "office": {
-      "name": "Vitalii"
-    }
-  }
-]
- */
 public class InvoiceResponse
 {
     [Display("Invoice ID")]

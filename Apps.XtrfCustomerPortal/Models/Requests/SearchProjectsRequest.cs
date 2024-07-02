@@ -9,7 +9,7 @@ public class SearchProjectsRequest
     [StaticDataSource(typeof(ProjectStatusDataSource))]
     public IEnumerable<string>? Statuses { get; set; }
     
-    [StaticDataSource(typeof(SurveyStatusDataSource))]
+    [Display("Survey status"), StaticDataSource(typeof(SurveyStatusDataSource))]
     public string? SurveyStatus { get; set; }
 
     [Display("Search (Project ID, ID number, reference number, or project name)")]

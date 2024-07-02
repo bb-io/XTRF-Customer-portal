@@ -3,13 +3,15 @@ namespace Apps.XtrfCustomerPortal.Models.Dtos;
 public class TaskFilesDto
 {
     public int Id { get; set; }
+    
     public string IdNumber { get; set; }
     public List<TaskFile> TasksFiles { get; set; }
+    
     public bool OutputFilesAsZipDownloadable { get; set; }
 
     public class TaskFile
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string IdNumber { get; set; }
         public LanguageCombination LanguageCombination { get; set; }
         public FileGroup InputWorkfiles { get; set; }
@@ -26,7 +28,7 @@ public class TaskFilesDto
 
     public class Language
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Symbol { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }
@@ -49,7 +51,7 @@ public class TaskFilesDto
     public class File
     {
         public string Name { get; set; }
-        public int Id { get; set; }
+        public string Id { get; set; }
         public bool Downloadable { get; set; }
         public string Category { get; set; }
         public bool Zip { get; set; }

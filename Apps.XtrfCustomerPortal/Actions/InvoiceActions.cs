@@ -31,19 +31,12 @@ public class InvoiceActions(InvocationContext invocationContext, IFileManagement
             endpoint = endpoint.AddQueryParameter("search", request.Search);
         }
     
-        if (request.InvoiceDateFrom.HasValue)
-        {
-            var invoiceDateFromMilliseconds = new DateTimeOffset(request.InvoiceDateFrom.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("invoiceDateFrom", invoiceDateFromMilliseconds.ToString());
-        }
-
-        if (request.InvoiceDateTo.HasValue)
-        {
-            var invoiceDateToMilliseconds = new DateTimeOffset(request.InvoiceDateTo.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("invoiceDateTo", invoiceDateToMilliseconds.ToString());
-        }
-    
         var invoices = await FetchInvoicesWithPagination(endpoint);
+        invoices.Invoices = invoices.Invoices
+            .Where(i => request.InvoiceDateFrom == null || i.ExpectedFullyPaidDate >= request.InvoiceDateFrom)
+            .Where(i => request.InvoiceDateTo == null || i.ExpectedFullyPaidDate <= request.InvoiceDateTo)
+            .ToList();
+        
         return invoices;
     }
     

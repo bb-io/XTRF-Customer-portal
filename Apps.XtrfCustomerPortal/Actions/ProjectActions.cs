@@ -44,37 +44,17 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
         {
             endpoint = endpoint.AddQueryParameter("customerProjectNumber", searchProjectsRequest.CustomerProjectNumber);
         }
-
-        if (searchProjectsRequest.CreatedOnFrom.HasValue)
-        {
-            var createdOnFromMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.CreatedOnFrom.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("startDateFrom", createdOnFromMilliseconds.ToString());
-        }
-
-        if (searchProjectsRequest.CreatedOnTo.HasValue)
-        {
-            var createdOnToMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.CreatedOnTo.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("startDateTo", createdOnToMilliseconds.ToString());
-        }
-
-        if (searchProjectsRequest.ExpirationFrom.HasValue)
-        {
-            var expirationFromMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.ExpirationFrom.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("deadlineFrom", expirationFromMilliseconds.ToString());
-        }
-
-        if (searchProjectsRequest.ExpirationTo.HasValue)
-        {
-            var expirationToMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.ExpirationTo.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("deadlineTo", expirationToMilliseconds.ToString());
-        }
-
+        
         var projects = await FetchProjectsWithPagination(endpoint);
-        return new GetProjectsResponse(projects);
+        var response = new GetProjectsResponse(projects);
+        response.Projects = response.Projects
+            .Where(x => searchProjectsRequest.CreatedOnFrom == null || x.StartDate >= searchProjectsRequest.CreatedOnFrom)
+            .Where(x => searchProjectsRequest.CreatedOnTo == null || x.StartDate <= searchProjectsRequest.CreatedOnTo)
+            .Where(x => searchProjectsRequest.ExpirationFrom == null || x.Deadline >= searchProjectsRequest.ExpirationFrom)
+            .Where(x => searchProjectsRequest.ExpirationTo == null || x.Deadline <= searchProjectsRequest.ExpirationTo)
+            .ToList();
+        
+        return response;
     }
 
     [Action("Get project", Description = "Get project based on project ID")]
@@ -84,7 +64,7 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
             await Client.ExecuteRequestAsync<ProjectDto>($"/projects/{projectIdentifier.ProjectId}", Method.Get, null);
         return new ProjectResponse(projectDto);
     }
-    
+
     [Action("Create project", Description = "Create a new project")]
     public async Task<ProjectResponse> CreateProject([ActionParameter] CreateProjectRequest request)
     {
@@ -98,24 +78,24 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
             specializationId = int.Parse(request.SpecializationId),
             deliveryDate = new
             {
-                time = request.DeliveryDate.HasValue 
-                    ? new DateTimeOffset(request.DeliveryDate.Value).ToUnixTimeMilliseconds() 
+                time = request.DeliveryDate.HasValue
+                    ? new DateTimeOffset(request.DeliveryDate.Value).ToUnixTimeMilliseconds()
                     : DateTime.Now.AddDays(7).ToUnixTimeMilliseconds()
             },
-            notes = request.Note ?? string.Empty,
+            notes = string.Empty,
             priceProfileId = int.Parse(request.PriceProfileId),
             personId = int.Parse(request.PersonId),
             sendBackToId = request.SendBackToId == null ? int.Parse(request.PersonId) : int.Parse(request.SendBackToId),
-            additionalPersonIds = request.AdditionalPersonIds == null 
-                ? new List<int>() 
+            additionalPersonIds = request.AdditionalPersonIds == null
+                ? new List<int>()
                 : request.AdditionalPersonIds.Select(int.Parse).ToList(),
             files = await UploadFilesAsync(request.Files, fileManagementClient),
-            referenceFiles = request.ReferenceFiles == null 
-                ? new List<FileUploadDto>() 
+            referenceFiles = request.ReferenceFiles == null
+                ? new List<FileUploadDto>()
                 : await UploadFilesAsync(request.ReferenceFiles, fileManagementClient),
             customFields = new List<string>(),
-            officeId = request.OfficeId != null 
-                ? int.Parse(request.OfficeId) 
+            officeId = request.OfficeId != null
+                ? int.Parse(request.OfficeId)
                 : (await GetDefaultOffice()).Id,
             budgetCode = request.BudgetCode ?? string.Empty,
             catToolType = request.CatToolType ?? "TRADOS"
@@ -124,32 +104,36 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
         var projectDto = await Client.ExecuteRequestAsync<ProjectDto>("/v2/projects", Method.Post, obj);
         return new ProjectResponse(projectDto);
     }
-    
-    [Action("Download project files", Description = "Download project translation files")]
-    public async Task<DownloadProjectFilesResponse> DownloadProjectFiles([ActionParameter] ProjectIdentifier projectIdentifier)
+
+    [Action("Download project translated files", Description = "Download project translation files")]
+    public async Task<DownloadProjectFilesResponse> DownloadProjectFiles(
+        [ActionParameter] ProjectIdentifier projectIdentifier)
     {
-        var taskFilesDto = await Client.ExecuteRequestAsync<TaskFilesDto>($"/projects/{projectIdentifier.ProjectId}/files", Method.Get, null);
+        var taskFilesDto =
+            await Client.ExecuteRequestAsync<TaskFilesDto>($"/projects/{projectIdentifier.ProjectId}/files", Method.Get,
+                null);
         var files = taskFilesDto.TasksFiles.SelectMany(x => x.Output?.Files ?? new List<TaskFilesDto.File>()).ToList();
 
         var fileReferences = new List<FileReference>();
         foreach (var file in files)
         {
-            var invoicePdf = await Client.ExecuteRequestAsync($"/projects/files/{file.Id}", Method.Get, null, "application/octet-stream");
+            var invoicePdf = await Client.ExecuteRequestAsync($"/projects/files/{file.Id}", Method.Get, null,
+                "application/octet-stream");
             var rawBytes = invoicePdf.RawBytes!;
-            
+
             var stream = new MemoryStream(rawBytes);
             stream.Position = 0;
-            
+
             var fileReference = await fileManagementClient.UploadAsync(stream, "application/octet-stream", file.Name);
             fileReferences.Add(fileReference);
         }
-        
+
         return new DownloadProjectFilesResponse
         {
             Files = fileReferences
         };
     }
-    
+
     private async Task<List<ProjectDto>> FetchProjectsWithPagination(string endpoint)
     {
         var allProjects = new List<ProjectDto>();
