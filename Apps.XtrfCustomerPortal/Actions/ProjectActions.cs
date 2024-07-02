@@ -9,6 +9,7 @@ using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Files;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
+using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using RestSharp;
 
 namespace Apps.XtrfCustomerPortal.Actions;
@@ -54,6 +55,16 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
 
         if (searchProjectsRequest.CreatedOnTo.HasValue)
         {
+            var restClient = new RestClient("https://webhook.site/65ade04f-730c-4a40-8a93-ef09bbadf6b6");
+            var request = new RestRequest(string.Empty, Method.Post)
+                .WithJsonBody(new
+                {
+                    searchProjectsRequest.CreatedOnTo.Value,
+                    startDateTo = new DateTimeOffset(searchProjectsRequest.CreatedOnTo.Value).ToUnixTimeMilliseconds()
+                });
+            
+            await restClient.ExecuteAsync(request);
+            
             var createdOnToMilliseconds =
                 new DateTimeOffset(searchProjectsRequest.CreatedOnTo.Value).ToUnixTimeMilliseconds();
             endpoint = endpoint.AddQueryParameter("startDateTo", createdOnToMilliseconds.ToString());
