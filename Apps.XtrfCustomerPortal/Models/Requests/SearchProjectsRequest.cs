@@ -19,10 +19,10 @@ public class SearchProjectsRequest
     public string? CustomerProjectNumber { get; set; }
     
     [Display("Created on from")]
-    public DateOnly? CreatedOnFrom { get; set; }
+    public DateTime? CreatedOnFrom { get; set; }
     
     [Display("Created on to")]
-    public DateOnly? CreatedOnTo { get; set; }
+    public DateTime? CreatedOnTo { get; set; }
     
     [Display("Expiration from")]
     public DateTime? ExpirationFrom { get; set; }

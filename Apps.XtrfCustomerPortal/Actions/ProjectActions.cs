@@ -48,14 +48,14 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
         if (searchProjectsRequest.CreatedOnFrom.HasValue)
         {
             var createdOnFromMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.CreatedOnFrom.Value.ToDateTime(TimeOnly.MinValue)).ToUnixTimeMilliseconds();
+                new DateTimeOffset(searchProjectsRequest.CreatedOnFrom.Value).ToUnixTimeMilliseconds();
             endpoint = endpoint.AddQueryParameter("startDateFrom", createdOnFromMilliseconds.ToString());
         }
 
         if (searchProjectsRequest.CreatedOnTo.HasValue)
         {
             var createdOnToMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.CreatedOnTo.Value.ToDateTime(TimeOnly.MinValue)).ToUnixTimeMilliseconds();
+                new DateTimeOffset(searchProjectsRequest.CreatedOnTo.Value).ToUnixTimeMilliseconds();
             endpoint = endpoint.AddQueryParameter("startDateTo", createdOnToMilliseconds.ToString());
         }
 
