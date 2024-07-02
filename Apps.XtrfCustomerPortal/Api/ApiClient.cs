@@ -95,6 +95,29 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
 
     protected override Exception ConfigureErrorException(RestResponse response)
     {
-        return new Exception($"Error message: {response.Content}; StatusCode: {response.StatusCode}");
+        try
+        {
+            var xmlSerializer = new XmlSerializer(typeof(XmlErrorDto));
+            using var xmlReader = new StringReader(response.Content!);
+        
+            var xmlErrorDto = (XmlErrorDto)xmlSerializer.Deserialize(xmlReader)!;
+            return new Exception($"Error message: {xmlErrorDto.Body}; StatusCode: {response.StatusCode}");
+        }
+        catch (InvalidOperationException)
+        {
+            try
+            {
+                var jsonErrorDto = JsonConvert.DeserializeObject<JsonErrorDto>(response.Content!)!;
+                return new Exception($"Error message: {jsonErrorDto.ErrorMessage}; StatusCode: {response.StatusCode}");
+            }
+            catch (JsonException)
+            {
+                return new Exception($"Error message: {response.Content}; StatusCode: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            return new Exception($"Unexpected error during error deserialization: {ex.Message}; Error body: {response.Content!} ; StatusCode: {response.StatusCode}");
+        }
     }
 }

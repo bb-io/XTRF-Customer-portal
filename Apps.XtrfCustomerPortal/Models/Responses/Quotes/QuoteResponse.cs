@@ -1,5 +1,5 @@
-using System.Globalization;
 using Apps.XtrfCustomerPortal.Models.Dtos;
+using Apps.XtrfCustomerPortal.Utilities.Extensions;
 using Blackbird.Applications.Sdk.Common;
 
 namespace Apps.XtrfCustomerPortal.Models.Responses.Quotes;
@@ -34,8 +34,6 @@ public class QuoteResponse
     
     [Display("Office")] public string Office { get; set; }
     
-    [Display("Customer notes")] public string CustomerNotes { get; set; } 
-    
     [Display("Status")] public string Status { get; set; } 
     
     [Display("Sales person ID")] public string SalesPersonId { get; set; }
@@ -59,30 +57,12 @@ public class QuoteResponse
             SourceLanguage = lc.SourceLanguage.Symbol,
             TargetLanguage = lc.TargetLanguage.Symbol
         }).ToList();
-        StartDate = ParseDate(quoteDtoDto.StartDate?.Formatted);
-        Deadline = ParseDate(quoteDtoDto.Deadline?.Formatted); 
+        StartDate = quoteDtoDto.StartDate?.Formatted.ParseDate() ?? DateTime.MinValue;
+        Deadline = quoteDtoDto.Deadline?.Formatted.ParseDate() ?? DateTime.MinValue;
         Office = quoteDtoDto.Office.Name;
-        CustomerNotes = quoteDtoDto.CustomerNotes;
         Status = quoteDtoDto.Status;
         SalesPersonId = quoteDtoDto.SalesPerson?.Id.ToString() ?? string.Empty;
         SalesPersonName = quoteDtoDto.SalesPerson?.Name ?? string.Empty;
-    }
-    
-    // Example: 2023-12-20 08:30 CET
-    private DateTime ParseDate(string? dateString)
-    {
-        if (string.IsNullOrEmpty(dateString))
-        {
-            return DateTime.MinValue;
-        }
-
-        const string format = "yyyy-MM-dd HH:mm 'CET'";
-        if (DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
-        {
-            return parsedDate;
-        }
-
-        return DateTime.MinValue;
     }
 }
 

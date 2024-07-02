@@ -11,7 +11,8 @@ public class ProjectStatusDataSource : IStaticDataSourceHandler
             { "OPENED", "Opened" },
             { "CLOSED", "Closed" },
             { "CLAIM", "Claim" },
-            { "CANCELLED", "Cancelled" }
+            { "CANCELLED", "Cancelled" },
+            { "REQUESTED_PROJECT", "Requested"}
         };
     }
 }

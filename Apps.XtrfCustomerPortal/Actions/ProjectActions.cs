@@ -102,7 +102,7 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
                     ? new DateTimeOffset(request.DeliveryDate.Value).ToUnixTimeMilliseconds() 
                     : DateTime.Now.AddDays(7).ToUnixTimeMilliseconds()
             },
-            notes = request.Note ?? string.Empty,
+            notes = string.Empty,
             priceProfileId = int.Parse(request.PriceProfileId),
             personId = int.Parse(request.PersonId),
             sendBackToId = request.SendBackToId == null ? int.Parse(request.PersonId) : int.Parse(request.SendBackToId),

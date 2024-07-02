@@ -32,13 +32,10 @@ public class CreateProjectRequest
     [Display("Delivery date", Description = "By default, the delivery date is set to the current date + 7 days.")]
     public DateTime? DeliveryDate { get; set; }
 
-    [Display("Note")]
-    public string? Note { get; set; }
-
     [Display("Price profile ID"), DataSource(typeof(PriceProfileDataSource))]
     public string PriceProfileId { get; set; }
 
-    [Display("Person ID"), DataSource(typeof(PersonDataSource))]
+    [Display("Contact person ID"), DataSource(typeof(PersonDataSource))]
     public string PersonId { get; set; }
 
     [Display("Send back to ID"), DataSource(typeof(PersonDataSource))]
@@ -47,7 +44,7 @@ public class CreateProjectRequest
     [Display("Additional person IDs"), DataSource(typeof(PersonDataSource))]
     public IEnumerable<string>? AdditionalPersonIds { get; set; }
     
-    [Display("Additional email addresses")]
+    [Display("Reference files")]
     public IEnumerable<FileReference>? ReferenceFiles { get; set; }
 
     [Display("Office ID"), DataSource(typeof(OfficeDataSource))]
@@ -56,6 +53,6 @@ public class CreateProjectRequest
     [Display("Budget code")]
     public string? BudgetCode { get; set; }
 
-    [Display("Cat tool type", Description = "By default, the value is set to 'Trados'."), StaticDataSource(typeof(CatToolTypeDataSource))]
+    [Display("CAT tool type", Description = "By default, the value is set to 'Trados'."), StaticDataSource(typeof(CatToolTypeDataSource))]
     public string? CatToolType { get; set; }
 }

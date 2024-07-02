@@ -1,7 +1,7 @@
-using System.Globalization;
 using Apps.XtrfCustomerPortal.Models.Dtos;
 using Apps.XtrfCustomerPortal.Models.Responses.Quotes;
 using Blackbird.Applications.Sdk.Common;
+using Apps.XtrfCustomerPortal.Utilities.Extensions;
 
 namespace Apps.XtrfCustomerPortal.Models.Responses.Projects;
 
@@ -42,8 +42,6 @@ public class ProjectResponse
     
     public DateTime Deadline { get; set; }
     
-    public string Note { get; set; }
-    
     public string Status { get; set; }
 
     [Display("Is project")]
@@ -75,29 +73,12 @@ public class ProjectResponse
             SourceLanguage = lc.SourceLanguage.Symbol,
             TargetLanguage = lc.TargetLanguage.Symbol
         }).ToList();
-        StartDate = ParseDate(dto.StartDate?.Formatted);
-        Deadline = ParseDate(dto.Deadline?.Formatted); 
-        Note = dto.CustomerNotes;
+        StartDate = dto.StartDate?.Formatted.ParseDate() ?? DateTime.MinValue;
+        Deadline = dto.Deadline?.Formatted.ParseDate() ?? DateTime.MinValue;
         Status = dto.Status;
         IsProject = dto.IsProject;
         BudgetCode = dto.BudgetCode;
         HasOutputFiles = dto.HasOutputFiles;
         AwaitingCustomerReview = dto.AwaitingCustomerReview;
-    }
-    
-    private DateTime ParseDate(string? dateString)
-    {
-        if (string.IsNullOrEmpty(dateString))
-        {
-            return DateTime.MinValue;
-        }
-
-        const string format = "yyyy-MM-dd HH:mm 'CET'";
-        if (DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
-        {
-            return parsedDate;
-        }
-
-        return DateTime.MinValue;
     }
 }
