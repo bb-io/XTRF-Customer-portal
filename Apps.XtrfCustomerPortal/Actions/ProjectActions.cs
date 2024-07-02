@@ -44,42 +44,14 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
         {
             endpoint = endpoint.AddQueryParameter("customerProjectNumber", searchProjectsRequest.CustomerProjectNumber);
         }
-
-        if (searchProjectsRequest.CreatedOnFrom.HasValue)
-        {
-            var createdOnFromMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.CreatedOnFrom.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("startDateFrom", createdOnFromMilliseconds.ToString());
-        }
-
-        if (searchProjectsRequest.CreatedOnTo.HasValue)
-        {
-            var createdOnToMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.CreatedOnTo.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("startDateTo", createdOnToMilliseconds.ToString());
-        }
-
-        if (searchProjectsRequest.ExpirationFrom.HasValue)
-        {
-            var expirationFromMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.ExpirationFrom.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("deadlineFrom", expirationFromMilliseconds.ToString());
-        }
-
-        if (searchProjectsRequest.ExpirationTo.HasValue)
-        {
-            var expirationToMilliseconds =
-                new DateTimeOffset(searchProjectsRequest.ExpirationTo.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("deadlineTo", expirationToMilliseconds.ToString());
-        }
         
         var projects = await FetchProjectsWithPagination(endpoint);
         var response = new GetProjectsResponse(projects);
         response.Projects = response.Projects
             .Where(x => searchProjectsRequest.CreatedOnFrom == null || x.StartDate >= searchProjectsRequest.CreatedOnFrom)
-            .Where(x => searchProjectsRequest.CreatedOnFrom == null || x.StartDate <= searchProjectsRequest.CreatedOnTo)
-            .Where(x => searchProjectsRequest.CreatedOnFrom == null || x.Deadline >= searchProjectsRequest.ExpirationFrom)
-            .Where(x => searchProjectsRequest.CreatedOnFrom == null || x.Deadline <= searchProjectsRequest.ExpirationTo)
+            .Where(x => searchProjectsRequest.CreatedOnTo == null || x.StartDate <= searchProjectsRequest.CreatedOnTo)
+            .Where(x => searchProjectsRequest.ExpirationFrom == null || x.Deadline >= searchProjectsRequest.ExpirationFrom)
+            .Where(x => searchProjectsRequest.ExpirationTo == null || x.Deadline <= searchProjectsRequest.ExpirationTo)
             .ToList();
         
         return response;
