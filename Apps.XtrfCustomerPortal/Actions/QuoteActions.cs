@@ -30,31 +30,15 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
             endpoint = endpoint.AddQueryParameter("search", searchQuotesRequest.Search);
         }
         
-        if (searchQuotesRequest.CreatedOnFrom.HasValue)
-        {
-            var createdOnFromMilliseconds = new DateTimeOffset(searchQuotesRequest.CreatedOnFrom.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("createdOnFrom", createdOnFromMilliseconds.ToString());
-        }
-
-        if (searchQuotesRequest.CreatedOnTo.HasValue)
-        {
-            var createdOnToMilliseconds = new DateTimeOffset(searchQuotesRequest.CreatedOnTo.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("createdOnTo", createdOnToMilliseconds.ToString());
-        }
-
-        if (searchQuotesRequest.ExpirationFrom.HasValue)
-        {
-            var expirationFromMilliseconds = new DateTimeOffset(searchQuotesRequest.ExpirationFrom.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("expirationDateFrom", expirationFromMilliseconds.ToString());
-        }
-
-        if (searchQuotesRequest.ExpirationTo.HasValue)
-        {
-            var expirationToMilliseconds = new DateTimeOffset(searchQuotesRequest.ExpirationTo.Value).ToUnixTimeMilliseconds();
-            endpoint = endpoint.AddQueryParameter("expirationDateTo", expirationToMilliseconds.ToString());
-        }
-        
         var quotes = await FetchQuotesWithPagination(endpoint);
+
+        quotes.Quotes = quotes.Quotes
+            .Where(x => searchQuotesRequest.CreatedOnFrom == null || x.StartDate >= searchQuotesRequest.CreatedOnFrom)
+            .Where(x => searchQuotesRequest.CreatedOnTo == null || x.StartDate <= searchQuotesRequest.CreatedOnTo)
+            .Where(x => searchQuotesRequest.ExpirationFrom == null || x.Deadline >= searchQuotesRequest.ExpirationFrom)
+            .Where(x => searchQuotesRequest.ExpirationTo == null || x.Deadline <= searchQuotesRequest.ExpirationTo)
+            .ToList();
+        
         return quotes;
     }
     

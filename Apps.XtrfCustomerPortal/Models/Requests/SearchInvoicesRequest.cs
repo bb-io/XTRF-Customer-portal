@@ -1,9 +1,12 @@
+using Apps.XtrfCustomerPortal.DataSources.Static;
 using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Dictionaries;
 
 namespace Apps.XtrfCustomerPortal.Models.Requests;
 
 public class SearchInvoicesRequest
 {
+    [StaticDataSource(typeof(ViewDataSource))]
     public string? View { get; set; }
     
     [Display("Search (Final number, draft number or accountancy person)")]
