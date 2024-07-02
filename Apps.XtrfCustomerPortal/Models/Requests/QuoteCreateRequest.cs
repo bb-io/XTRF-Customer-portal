@@ -24,7 +24,7 @@ public class QuoteCreateRequest
     public string SourceLanguageId { get; set; }
     
     [Display("Target language IDs"), DataSource(typeof(LanguageDataSource))]
-    public IEnumerable<string>? TargetLanguageIds { get; set; }
+    public IEnumerable<string> TargetLanguageIds { get; set; }
     
     [Display("Specialization ID"), DataSource(typeof(SpecializationDataSource))]
     public string SpecializationId { get; set; }

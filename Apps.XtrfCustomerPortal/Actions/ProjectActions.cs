@@ -125,7 +125,7 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
         return new ProjectResponse(projectDto);
     }
     
-    [Action("Download project files", Description = "Download project translation files")]
+    [Action("Download project translated files", Description = "Download project translation files")]
     public async Task<DownloadProjectFilesResponse> DownloadProjectFiles([ActionParameter] ProjectIdentifier projectIdentifier)
     {
         var taskFilesDto = await Client.ExecuteRequestAsync<TaskFilesDto>($"/projects/{projectIdentifier.ProjectId}/files", Method.Get, null);

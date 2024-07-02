@@ -30,8 +30,7 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
             request.WithJsonBody(bodyObj);
         }
         
-        var response = await ExecuteWithErrorHandling<T>(request);
-        return response;
+        return await ExecuteWithErrorHandling<T>(request);
     }
     
     public async Task<RestResponse> ExecuteRequestAsync(string endpoint, Method method, object? bodyObj, string? acceptHeader = null)
