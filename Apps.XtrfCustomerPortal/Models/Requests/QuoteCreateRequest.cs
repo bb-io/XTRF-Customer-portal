@@ -38,10 +38,10 @@ public class QuoteCreateRequest
     [Display("Contact person ID"), DataSource(typeof(PersonDataSource))]
     public string PersonId { get; set; }
 
-    [Display("Send back to ID"), DataSource(typeof(PersonDataSource))]
+    [Display("Send back to contact person ID"), DataSource(typeof(PersonDataSource))]
     public string? SendBackToId { get; set; }
 
-    [Display("Additional person IDs"), DataSource(typeof(PersonDataSource))]
+    [Display("Additional contact IDs"), DataSource(typeof(PersonDataSource))]
     public IEnumerable<string>? AdditionalPersonIds { get; set; }
     
     [Display("Reference files")]

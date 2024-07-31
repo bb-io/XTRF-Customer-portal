@@ -21,7 +21,7 @@ public static class DateTimeExtensions
 
         if (DateTimeOffset.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTimeOffset parsedDate))
         {
-            return parsedDate.DateTime;
+            return parsedDate.DateTime.ToUniversalTime();
         }
 
         return DateTime.MinValue;
