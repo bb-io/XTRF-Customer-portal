@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Apps.XtrfCustomerPortal.Constants;
 using Apps.XtrfCustomerPortal.Models.Dtos;
@@ -94,6 +96,11 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
 
     protected override Exception ConfigureErrorException(RestResponse response)
     {
+        if (response.StatusCode == HttpStatusCode.TooManyRequests)
+        {
+            return new Exception(ParseHtmlErrorMessage(response.Content!));
+        }
+        
         try
         {
             var xmlSerializer = new XmlSerializer(typeof(XmlErrorDto));
@@ -118,5 +125,11 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
         {
             return new Exception($"Unexpected error during error deserialization: {ex.Message}; Error body: {response.Content!} ; Status code: {response.StatusCode}");
         }
+    }
+    
+    private string ParseHtmlErrorMessage(string htmlContent)
+    {
+        var match = Regex.Match(htmlContent, @"<h1>([^<]+)</h1>");
+        return match.Success ? match.Groups[1].Value : "Unknown HTML error";
     }
 }

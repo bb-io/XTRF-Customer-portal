@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <Product>XTRF Customer portal</Product>
         <Description>The XTRF Customer Portal is a private website restricted to authorized use for business purposes. It allows clients to access and manage translation project details. Within the portal, clients can view and edit information such as contact details, account manager, pricing, language combinations, and CAT tools used.</Description>
-        <Version>1.0.1</Version>
+        <Version>1.0.3</Version>
         <PackageId>Apps.XtrfCustomerPortal</PackageId>
         <AssemblyName>Apps.XtrfCustomerPortal</AssemblyName>
     </PropertyGroup>
@@ -14,6 +14,10 @@
     <ItemGroup>
         <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.8.0" />
         <PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.25" />
+        <PackageReference Include="MimeTypes" Version="2.5.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
