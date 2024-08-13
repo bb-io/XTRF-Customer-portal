@@ -113,18 +113,19 @@ public class ProjectActions(InvocationContext invocationContext, IFileManagement
             await Client.ExecuteRequestAsync<TaskFilesDto>($"/projects/{projectIdentifier.ProjectId}/files", Method.Get,
                 null);
         var files = taskFilesDto.TasksFiles.SelectMany(x => x.Output?.Files ?? new List<TaskFilesDto.File>()).ToList();
-
+        
         var fileReferences = new List<FileReference>();
         foreach (var file in files)
         {
-            var invoicePdf = await Client.ExecuteRequestAsync($"/projects/files/{file.Id}", Method.Get, null,
+            var filesResponse = await Client.ExecuteRequestAsync($"/projects/files/{file.Id}", Method.Get, null,
                 "application/octet-stream");
-            var rawBytes = invoicePdf.RawBytes!;
+            var rawBytes = filesResponse.RawBytes!;
 
             var stream = new MemoryStream(rawBytes);
             stream.Position = 0;
 
-            var fileReference = await fileManagementClient.UploadAsync(stream, "application/octet-stream", file.Name);
+            var mimeType = MimeTypes.GetMimeType(file.Name);
+            var fileReference = await fileManagementClient.UploadAsync(stream, mimeType, file.Name);
             fileReferences.Add(fileReference);
         }
 
