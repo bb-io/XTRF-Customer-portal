@@ -61,6 +61,8 @@ Typically, the URL for the XTRF Customer Portal is `https://[your-xtrf-host.com]
 - **Search quotes** - Search quotes based on the provided criteria.
 - **Get quote** - Get a specific quote by Quote ID.
 - **Create quote** - Create a new quote based on the provided data.
+- **Accept quote** - Accept a specific quote by Quote ID (only Quotes with Sent status can be accepted)
+- **Reject quote** - Reject a specific quote by Quote ID
 
 ## Feedback
 
