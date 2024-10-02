@@ -48,7 +48,21 @@ public class QuoteActions(InvocationContext invocationContext, IFileManagementCl
         var quoteDto = await Client.ExecuteRequestAsync<QuoteDto>($"/quotes/{quoteIdentifier.QuoteId}", Method.Get, null);
         return new(quoteDto);
     }
-    
+
+    [Action("Accept quote", Description = "Accepts a specific quote by Quote ID")]
+    public async Task AcceptQuote([ActionParameter] QuoteIdentifier quoteIdentifier)
+    {
+        await Client.ExecuteRequestAsync($"/quotes/{quoteIdentifier.QuoteId}/acceptance", Method.Put, null);
+        return;
+    }
+
+    [Action("Reject quote", Description = "Rejects a specific quote by Quote ID")]
+    public async Task RejectQuote([ActionParameter] QuoteIdentifier quoteIdentifier)
+    {
+        await Client.ExecuteRequestAsync($"/quotes/{quoteIdentifier.QuoteId}/acceptance", Method.Delete, null);
+        return;
+    }
+
     [Action("Create quote", Description = "Create a new quote based on the provided data")]
     public async Task<QuoteResponse> CreateQuote([ActionParameter] QuoteCreateRequest request)
     {
