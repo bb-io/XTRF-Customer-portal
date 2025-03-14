@@ -5,6 +5,7 @@ using Apps.XtrfCustomerPortal.Constants;
 using Apps.XtrfCustomerPortal.Models.Dtos;
 using Apps.XtrfCustomerPortal.Utilities;
 using Blackbird.Applications.Sdk.Common.Authentication;
+using Blackbird.Applications.Sdk.Common.Exceptions;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using Blackbird.Applications.Sdk.Utils.Extensions.Sdk;
 using Blackbird.Applications.Sdk.Utils.RestSharp;
@@ -98,7 +99,7 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
     {
         if (response.StatusCode == HttpStatusCode.TooManyRequests)
         {
-            return new Exception(ParseHtmlErrorMessage(response.Content!));
+            return new PluginApplicationException(ParseHtmlErrorMessage(response.Content!));
         }
         
         try
@@ -107,7 +108,7 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
             using var xmlReader = new StringReader(response.Content!);
         
             var xmlErrorDto = (XmlErrorDto)xmlSerializer.Deserialize(xmlReader)!;
-            return new Exception($"Error message: {xmlErrorDto.Body}; Status code: {response.StatusCode}");
+            return new PluginApplicationException($"Error message: {xmlErrorDto.Body}; Status code: {response.StatusCode}");
         }
         catch (InvalidOperationException)
         {
@@ -118,12 +119,12 @@ public class ApiClient(List<AuthenticationCredentialsProvider> credentials)
             }
             catch (JsonException)
             {
-                return new Exception($"Error message: {response.Content}; Status code: {response.StatusCode}");
+                return new PluginApplicationException($"Error message: {response.Content}; Status code: {response.StatusCode}");
             }
         }
         catch (Exception ex)
         {
-            return new Exception($"Unexpected error during error deserialization: {ex.Message}; Error body: {response.Content!} ; Status code: {response.StatusCode}");
+            return new PluginApplicationException($"Unexpected error during error deserialization: {ex.Message}; Error body: {response.Content!} ; Status code: {response.StatusCode}");
         }
     }
     

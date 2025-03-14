@@ -1,0 +1,8 @@
+{
+  "ConnectionDefinition": {
+    "host": "",
+    "username": "",
+    "password": ""
+  },
+  "TestFolder": "TestFiles"
+}

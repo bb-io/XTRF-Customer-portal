@@ -72,5 +72,20 @@ public class ContactQuote
     public string Fax { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Www { get; set; } = string.Empty;
-    public List<string> SocialMediaContacts { get; set; } = new();
+    public List<SocialMediaContactDto> SocialMediaContacts { get; set; } = new();
+}
+
+public class SocialMediaContactDto
+{
+    public int Id { get; set; }
+    public SocialMedia SocialMedia { get; set; } = new();
+    public string Contact { get; set; } = string.Empty;
+}
+
+public class SocialMedia
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string AddressPrefix { get; set; } = string.Empty;
+    public string AddressSuffix { get; set; } = string.Empty;
 }
