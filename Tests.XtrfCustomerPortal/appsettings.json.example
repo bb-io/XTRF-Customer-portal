@@ -1,7 +1,8 @@
 {
-    "ConnectionDefinition": {
-        "apiKey": "",
-        "userToken": ""
-    },
-    "TestFolder": "TestFiles"
+  "ConnectionDefinition": {
+    "host": "",
+    "username": "",
+    "password": ""
+  },
+  "TestFolder": "TestFiles"
 }
