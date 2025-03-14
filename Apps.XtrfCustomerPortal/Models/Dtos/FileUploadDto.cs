@@ -29,17 +29,17 @@ public class FileUploadDto
 public class FileStats
 {
     [JsonProperty("charactersWithSpaces")]
-    public int CharactersWithSpaces { get; set; }
+    public int? CharactersWithSpaces { get; set; }
     
     [JsonProperty("charactersWithoutSpaces")]
-    public int CharactersWithoutSpaces { get; set; }
+    public int? CharactersWithoutSpaces { get; set; }
     
     [JsonProperty("words")]
-    public int Words { get; set; }
+    public int? Words { get; set; }
     
     [JsonProperty("lines")]
-    public int Lines { get; set; }
+    public int? Lines { get; set; }
     
     [JsonProperty("pages")]
-    public int Pages { get; set; }
+    public int? Pages { get; set; }
 }
