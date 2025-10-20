@@ -12,7 +12,7 @@ using RestSharp;
 
 namespace Apps.XtrfCustomerPortal.Actions;
 
-[ActionList]
+[ActionList("Quotes")]
 public class QuoteActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : AppInvocable(invocationContext)
 {
