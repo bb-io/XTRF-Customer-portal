@@ -13,7 +13,7 @@ using RestSharp;
 
 namespace Apps.XtrfCustomerPortal.Actions;
 
-[ActionList]
+[ActionList("Projects")]
 public class ProjectActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : AppInvocable(invocationContext)
 {
